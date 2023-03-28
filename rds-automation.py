@@ -1,7 +1,7 @@
 import boto3
 
 # create a Secrets Manager client
-client = boto3.client('secretsmanager')
+client = boto3.client('secretsmanager',region_name='us-east-1')
 
 # retrieve the secret value
 response = client.get_secret_value(SecretId='rds!cluster-ea6cf62c-e20c-4d81-80f7-8e645696e31e')
