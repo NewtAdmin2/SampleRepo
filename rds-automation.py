@@ -1,5 +1,6 @@
 import boto3
 import pymysql
+import json
 
 # create a Secrets Manager client
 client = boto3.client('secretsmanager',region_name='us-east-1')
@@ -11,6 +12,7 @@ secret = ''
 # if the secret is a string, return it directly
 if 'SecretString' in response:
     print(response['SecretString'])
+    secret = json.loads(response['SecretString'])
     # # #Connect to mysql rds instance
     db = pymysql.connect(host='database-1.cluster-chobkoc200g5.us-east-1.rds.amazonaws.com', user = secret['username'], password=secret['password'])
 
