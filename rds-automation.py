@@ -1,4 +1,5 @@
 import boto3
+import pymysql
 
 # create a Secrets Manager client
 client = boto3.client('secretsmanager',region_name='us-east-1')
@@ -10,6 +11,23 @@ secret = ''
 # if the secret is a string, return it directly
 if 'SecretString' in response:
     print(response['SecretString'])
+    # # #Connect to mysql rds instance
+    db = pymysql.connect(host='database-1.cluster-chobkoc200g5.us-east-1.rds.amazonaws.com', user = secret['username'], password=secret['password'])
+
+    # Create a new user
+    new_user = 'testuser123'
+    new_user_password = 'password123'
+    cursor = db.cursor()
+    cursor.execute(f"CREATE USER '{new_user}'@'%' IDENTIFIED BY '{new_user_password}'")
+
+    # Grant privileges to the user
+    cursor.execute(f"GRANT SELECT, INSERT, UPDATE ON mydatabase.* TO '{new_user}'@'%'")
+
+    # Commit changes and close the connection
+    db.commit()
+    cursor.close()
+    db.close()
+    print("User created successfully")
 # if the secret is binary, decode it using base64
 else:
     binary_secret_data = response['SecretBinary']
@@ -17,20 +35,3 @@ else:
     print(decoded_secret)
 
 
-# # #Connect to mysql rds instance
-# db = pymysql.connect(host=secret['host'], user = secret['username'], password=secret['password'])
-
-# # Create a new user
-# new_user = 'testuser123'
-# new_user_password = 'password123'
-# cursor = db.cursor()
-# cursor.execute(f"CREATE USER '{new_user}'@'%' IDENTIFIED BY '{new_user_password}'")
-
-# # Grant privileges to the user
-# cursor.execute(f"GRANT SELECT, INSERT, UPDATE ON mydatabase.* TO '{new_user}'@'%'")
-
-# # Commit changes and close the connection
-# db.commit()
-# cursor.close()
-# db.close()
-# print("User created successfully")
