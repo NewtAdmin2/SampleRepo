@@ -1,6 +1,4 @@
 import boto3
-import pymysql
-import json
 
 # create a Secrets Manager client
 client = boto3.client('secretsmanager')
@@ -11,8 +9,7 @@ secret = ''
 
 # if the secret is a string, return it directly
 if 'SecretString' in response:
-    secret = json.loads(response['SecretString'])
-    print(secret)
+    print(response['SecretString'])
 # if the secret is binary, decode it using base64
 else:
     binary_secret_data = response['SecretBinary']
