@@ -6,11 +6,9 @@ pipeline {
       steps {
         withAWS(credentials: 'newt-aws', region: 'us-east-1') {      
           sh '''
-            python3 -m venv venv && venv/bin/pip install -r requirements.txt
-
-            venv/bin/pip install pymysql
-        
-            python3 rds-automation.py
+            payload='{"key1": "value1", "key2": "value2", "key3": "value3"}'
+            output=$(aws lambda invoke --function-name 'testfunction' --payload '{"key1": "value1", "key2": "value2", "key3": "value3"}'  output.json --cli-binary-format raw-in-base64-out)
+            echo "$output"
           '''
         }
       }
